@@ -8,10 +8,12 @@ import { QuestionsModule } from './questions/questions.module';
 import { AnswersController } from './answers/answers.controller';
 import { AnswersModule } from './answers/answers.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 
 @Module({
-  imports: [UsersModule, CategoryModule, QuestionsModule, AnswersModule, AuthModule],
+  imports: [ ConfigModule.forRoot({isGlobal: true}),
+    UsersModule, CategoryModule, QuestionsModule, AnswersModule, AuthModule],
   controllers: [AppController, QuestionsController, AnswersController],
   providers: [AppService],
 })
