@@ -52,4 +52,10 @@ export class UsersService {
             where: {id: number},
         });
     }
+
+    async findByUserName(username: string): Promise<UsersDTO | null> {
+        return await this.prisma.users.findUnique({
+            where: { name: username },
+        });
+    }
 }
