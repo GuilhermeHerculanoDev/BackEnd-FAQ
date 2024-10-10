@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, Length } from "class-validator";
 
 export class UsersDTO {
     @IsNotEmpty({message:"O nome não pode está vazio"})
@@ -12,4 +12,7 @@ export class UsersDTO {
     @IsNotEmpty({message: "A senha não pode está vazia"})
     @Length(1,30, {message: "A senha deve ter 1 a 30 caracteres"})
     password: string;
+
+    @IsBoolean({message: "O campo is_adim so poder do tipo Booleano"})
+    is_admin?: boolean;
 }

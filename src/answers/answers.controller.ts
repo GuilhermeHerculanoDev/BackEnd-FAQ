@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { AnswerDTO } from './answers.dto';
+import { AnswerDTO } from './dtos/answers.dto';
 import { AnswersService } from './answers.service';
 import { IAnswers } from './interfaces/answers.interfaces';
 

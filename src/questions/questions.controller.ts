@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
-import { QuestionsDTO } from './questions.tdo';
+import { QuestionsDTO } from './dtos/questions.tdo';
 import { IQuestions } from './interfaces/questions.interface';
 
 @Controller('questions')

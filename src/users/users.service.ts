@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UsersDTO } from './users.dto';
+import { UsersDTO } from './dtos/users.dto';
 import { PrismaService } from '../database/prisma.service'
 import { IUsers } from './interfaces/users.interface';
 import * as bcrypt from 'bcrypt';
