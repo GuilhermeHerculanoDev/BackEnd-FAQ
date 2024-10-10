@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, Length } from "class-validator";
 
-export class QuestionsDTO{
+export class CreateQuestionsDTO{
     @IsNotEmpty({message: "O id do usuario não pode está vazio"})
     @IsNumber()
     users_id: number;

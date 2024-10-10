@@ -1,6 +1,6 @@
 import { IsBoolean, IsEmail, IsNotEmpty, Length } from "class-validator";
 
-export class UsersDTO {
+export class CreateUsersDTO {
     @IsNotEmpty({message:"O nome não pode está vazio"})
     @Length(1,50, {message: "O nome precisa entre 1 a 50 caracteres"})
     name: string;

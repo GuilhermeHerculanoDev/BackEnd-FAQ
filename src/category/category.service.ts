@@ -1,23 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { CategoryDTO } from './dtos/create.category.dto';
+import { CreateCategoryDTO } from './dtos/create.category.dto';
 import { Category } from '@prisma/client';
+import { UpdateCategoryDto } from './dtos/update.answer.dto';
+import { ICategory } from './interfaces/category.interface';
 
 @Injectable()
 export class CategoryService {
 
     constructor (private prisma: PrismaService) {}
 
-    async create(category: CategoryDTO): Promise<Category>{
+    async create(category: CreateCategoryDTO): Promise<Category>{
         const namecategory = this.prisma.category.create({data:category});
         return namecategory
     }
 
-    findAll(): Promise<Category[]>{
+    findAll(): Promise<ICategory[]>{
         return this.prisma.category.findMany()
     }
 
-    async findByID(id:number): Promise<Category> {
+    async findByID(id:number): Promise<ICategory> {
         let number = parseInt(id.toString())
         const category = await this.prisma.category.findUnique({
             where: { id: number }
@@ -30,7 +32,7 @@ export class CategoryService {
         throw new NotFoundException("Categoria não encontrada");
     }
 
-    async update(id:number, category:CategoryDTO): Promise<Category>{
+    async update(id:number, category:UpdateCategoryDto): Promise<ICategory>{
         let number = parseInt(id.toString())
         try {
             const updatedQuestion = await this.prisma.category.update({
@@ -43,7 +45,7 @@ export class CategoryService {
         }
     }
 
-    delete(id:number): Promise<Category>{
+    delete(id:number): Promise<ICategory>{
         let numberId = parseInt(id.toString())
         return this.prisma.category.delete({
             where: {id: numberId},
