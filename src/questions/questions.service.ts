@@ -1,14 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { QuestionsDTO } from './dtos/questions.tdo';
+import { CreateQuestionsDTO } from './dtos/create.questions.tdo';
 import { IQuestions } from './interfaces/questions.interface';
+import { UpdateQuestionsDto } from './dtos/update.questions.dto';
 
 @Injectable()
 export class QuestionsService {
 
     constructor (private prisma: PrismaService) {}
 
-    create(question:QuestionsDTO): Promise<IQuestions>{
+    create(question:CreateQuestionsDTO): Promise<IQuestions>{
         return this.prisma.questions.create({data:question})
     }
 
@@ -27,7 +28,7 @@ export class QuestionsService {
         throw new NotFoundException('Questão não encontrada');
     }
 
-    async update(id:number, question:QuestionsDTO): Promise<IQuestions>{
+    async update(id:number, question:UpdateQuestionsDto): Promise<IQuestions>{
         let number = parseInt(id.toString())
         try {
             const updatedQuestion = await this.prisma.questions.update({

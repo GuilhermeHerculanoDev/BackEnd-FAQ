@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
-import { QuestionsDTO } from './dtos/questions.tdo';
+import { CreateQuestionsDTO } from './dtos/create.questions.tdo';
 import { IQuestions } from './interfaces/questions.interface';
+import { UpdateQuestionsDto } from './dtos/update.questions.dto';
 
 @Controller('questions')
 export class QuestionsController {
@@ -9,7 +10,7 @@ export class QuestionsController {
     constructor (private QuestionsService: QuestionsService) {}
 
     @Post()
-    create(@Body() question:QuestionsDTO): Promise<IQuestions>{
+    create(@Body() question:CreateQuestionsDTO): Promise<IQuestions>{
         return this.QuestionsService.create(question)
     }
 
@@ -24,7 +25,7 @@ export class QuestionsController {
     }
 
     @Patch('/:id')
-    update(@Param('id') id:number, @Body() questions:QuestionsDTO): Promise<IQuestions>{
+    update(@Param('id') id:number, @Body() questions:UpdateQuestionsDto): Promise<IQuestions>{
         return this.QuestionsService.update(id, questions)
     }
 

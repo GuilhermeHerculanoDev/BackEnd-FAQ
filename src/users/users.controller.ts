@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { UsersDTO } from './dtos/users.dto';
+import { CreateUsersDTO } from './dtos/create.users.dto';
 import { UsersService } from './users.service';
 import { IUsers } from './interfaces/users.interface';
+import { UpdateUserDto } from './dtos/update.users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -9,7 +10,7 @@ export class UsersController {
     constructor (private UsersService: UsersService) {}
 
     @Post()
-    async create(@Body() users: UsersDTO): Promise<IUsers>{
+    async create(@Body() users: CreateUsersDTO): Promise<IUsers>{
         return this.UsersService.create(users)
     }
 
@@ -24,7 +25,7 @@ export class UsersController {
     }
 
     @Patch('/:id')
-    update(@Param('id') id:number, @Body() users: UsersDTO): Promise<IUsers>{
+    update(@Param('id') id:number, @Body() users: UpdateUserDto): Promise<IUsers>{
         return this.UsersService.update(id, users)
     }
 
