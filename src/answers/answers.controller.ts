@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateAnswerDTO } from './dtos/create.answers.dto';
 import { AnswersService } from './answers.service';
 import { IAnswers } from './interfaces/answers.interfaces';
 import { UpdateAnswerDTO } from './dtos/update.answer.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('answers')
+@UseGuards(AuthGuard)
 export class AnswersController {
 
     constructor (private AnswerService: AnswersService) {}
@@ -25,12 +27,12 @@ export class AnswersController {
     }
 
     @Patch('/:id')
-    update(@Param('id') id:number, @Body() answer:UpdateAnswerDTO): Promise<IAnswers>{
-        return this.AnswerService.update(id, answer)
+    update(@Param('id') id:number, @Body() answer:UpdateAnswerDTO, @Request() request): Promise<IAnswers>{
+        return this.AnswerService.update(id, answer, request)
     }
 
     @Delete('/:id')
-    delete(@Param('id') id:number): Promise<IAnswers>{
-        return this.AnswerService.delete(id)
+    delete(@Param('id') id:number, @Request() request): Promise<IAnswers>{
+        return this.AnswerService.delete(id, request)
     }
 }

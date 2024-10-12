@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateCategoryDTO } from './dtos/create.category.dto';
 import { Category } from '@prisma/client';
@@ -9,13 +9,19 @@ export class CategoryService {
 
     constructor (private prisma: PrismaService) {}
 
-    async create(category: CreateCategoryDTO): Promise<Category>{
-        const namecategory = this.prisma.category.create({data:category});
-        return namecategory
+    async create(category: CreateCategoryDTO, response): Promise<Category>{
+        if(response.user.admin === true){
+            const namecategory = this.prisma.category.create({data:category});
+            return namecategory
+        }
+        throw new UnauthorizedException("Somente administradores podem criar categorias");
     }
 
-    findAll(): Promise<Category[]>{
-        return this.prisma.category.findMany()
+    findAll(response): Promise<Category[]>{
+        if(response.user.admin === true){
+            return this.prisma.category.findMany()
+        }
+        throw new UnauthorizedException("Somente administradores podem criar categorias");
     }
 
     async findByID(id:number): Promise<Category> {
@@ -31,23 +37,27 @@ export class CategoryService {
         throw new NotFoundException("Categoria não encontrada");
     }
 
-    async update(id:number, category:UpdateCategoryDto): Promise<Category>{
-        let number = parseInt(id.toString())
-        try {
-            const updatedQuestion = await this.prisma.category.update({
-                where: { id:number },
-                data: category,
-            });
-            return updatedQuestion;
-        } catch (error) {
-            throw new NotFoundException('Categoria não encontrada');
+    async update(id:number, category:UpdateCategoryDto, response): Promise<Category>{
+        if (response.user.admin === true){
+            let number = parseInt(id.toString())
+            try {
+                const updatedQuestion = await this.prisma.category.update({
+                    where: { id:number },
+                    data: category,
+                });
+                return updatedQuestion;
+            } catch (error) {
+                throw new NotFoundException('Categoria não encontrada');
+            }
         }
     }
 
-    delete(id:number): Promise<Category>{
-        let numberId = parseInt(id.toString())
-        return this.prisma.category.delete({
-            where: {id: numberId},
-        });
+    delete(id:number, response): Promise<Category>{
+        if(response.user.admin){
+            let numberId = parseInt(id.toString())
+            return this.prisma.category.delete({
+                where: {id: numberId},
+            });
+        }
     }
 }

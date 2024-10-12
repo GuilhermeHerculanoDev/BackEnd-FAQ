@@ -24,8 +24,8 @@ export class AuthService {
             throw new UnauthorizedException()
         }
 
-        const payload = {sub: foundUser.name, username: foundUser.name}
-
+        const payload = {sub: foundUser.id, username: foundUser.name, admin: foundUser.is_admin}
+        console.log(payload)
         const token = this.jwtService.sign(payload)
         console.log(token, this.jwtExpirationTimeInSeconds)
         return {token, expiresIn: this.jwtExpirationTimeInSeconds}

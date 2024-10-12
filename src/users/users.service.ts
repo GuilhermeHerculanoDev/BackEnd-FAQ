@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUsersDTO } from './dtos/create.users.dto';
 import { PrismaService } from '../database/prisma.service'
 import { IUsers } from './interfaces/users.interface';
@@ -16,42 +16,56 @@ export class UsersService {
         return await this.prisma.users.create({data: {...users, password: hashPassword},});
     }
 
-    async findAll(): Promise<IUsers[]> {
-        const users = await this.prisma.users.findMany();  
-        return users
-    }
-
-    async findByID(id: number): Promise<IUsers> {
-        let number = parseInt(id.toString())
-        const user = await this.prisma.users.findUnique({
-            where: { id: number }
-        });
-    
-        if (user) {
-            return user
+    async findAll(request): Promise<IUsers[]> {
+        if (request.user.admin === true) {    
+            return await this.prisma.users.findMany();  
         }
-    
-        throw new NotFoundException("Usuário não encontrado");
+        throw new UnauthorizedException("O usuario não tem permisão");
     }
 
-    async update(id: number, users: UpdateUserDto): Promise<IUsers>{
-        let number = parseInt(id.toString())
-        try {
-            const updatedUser = await this.prisma.users.update({
-                where: { id:number },
-                data: users,
+    async findByID(id: number, request): Promise<IUsers> {
+        if (request.user.admin === true) {    
+            let number = parseInt(id.toString())
+            const user = await this.prisma.users.findUnique({
+                where: { id: number }
             });
-            return updatedUser;
-        } catch (error) {
-            throw new NotFoundException('Usuário não encontrado');
+        
+            if (user) {
+                return user
+            }
         }
+        
+            throw new NotFoundException("Usuário não encontrado");
     }
 
-    async delete(id: number): Promise<IUsers>{
+    async update(id: number, users: UpdateUserDto, request): Promise<IUsers>{
+        if (!request.user) {
+            throw new UnauthorizedException("Usuário não autenticado");
+          }
         let number = parseInt(id.toString())
-        return this.prisma.users.delete({
-            where: {id: number},
-        });
+        if (request.user.id === number || request.user.admin === true){
+            try {
+                const updatedUser = await this.prisma.users.update({
+                    where: { id:number },
+                    data: users,
+                });
+                return updatedUser;
+            } catch (error) {
+                throw new NotFoundException('Usuário não encontrado');
+            }
+        }
+        throw new UnauthorizedException("Seu usuario não pode editar")
+    }
+
+    async delete(id: number, request): Promise<IUsers>{
+        if (request.user.admin === true || !request.user) {    
+            let number = parseInt(id.toString())
+            return this.prisma.users.delete({
+                where: {id: number},
+            });
+        }
+        throw new UnauthorizedException("Seu usuario não pode excluir tarefas")
+
     }
 
     async findByUserName(username: string): Promise<CreateUsersDTO | null> {

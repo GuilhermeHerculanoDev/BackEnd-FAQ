@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { CreateQuestionsDTO } from './dtos/create.questions.tdo';
 import { IQuestions } from './interfaces/questions.interface';
 import { UpdateQuestionsDto } from './dtos/update.questions.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+
 
 @Controller('questions')
+@UseGuards(AuthGuard)
 export class QuestionsController {
 
     constructor (private QuestionsService: QuestionsService) {}
@@ -21,16 +24,16 @@ export class QuestionsController {
 
     @Get('/:id')
     finById(@Param('id') id:number): Promise<IQuestions>{
-        return this.QuestionsService.findById(id)
+        return this.QuestionsService.findByID(id)
     }
 
     @Patch('/:id')
-    update(@Param('id') id:number, @Body() questions:UpdateQuestionsDto): Promise<IQuestions>{
-        return this.QuestionsService.update(id, questions)
+    update(@Param('id') id:number, @Body() questions:UpdateQuestionsDto, @Request() request): Promise<IQuestions>{
+        return this.QuestionsService.update(id, questions, request)
     }
 
     @Delete('/:id')
-    delete(@Param('id') id:number): Promise<IQuestions>{
-        return this.QuestionsService.delete(id)
+    delete(@Param('id') id:number, @Request() request): Promise<IQuestions>{
+        return this.QuestionsService.delete(id, request)
     }
 }

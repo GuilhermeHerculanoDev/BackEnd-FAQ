@@ -31,23 +31,30 @@ export class AnswersService {
         throw new NotFoundException("Resposta não encontrada");
     }
 
-    async update(id:number, answer:UpdateAnswerDTO): Promise<IAnswers>{
+    async update(id:number, answer:UpdateAnswerDTO, request): Promise<IAnswers>{
         let number = parseInt(id.toString())
-        try {
-            const updatedAnswer = await this.prisma.answers.update({
-                where: { id:number },
-                data: answer,
-            });
-            return updatedAnswer;
-        } catch (error) {
-            throw new NotFoundException('Resposta não encontrada');
+        if (request.user.id === number || request.users.admin === true){
+            try {
+                const updatedAnswer = await this.prisma.answers.update({
+                    where: { id:number },
+                    data: answer,
+                });
+                return updatedAnswer;
+            } catch (error) {
+                throw new NotFoundException('Resposta não encontrada');
+            }
         }
+        throw new NotFoundException('Resposta não pode ser editada');
     }
 
-    delete(id:number): Promise<IAnswers>{
+    delete(id:number, request): Promise<IAnswers>{
         let number = parseInt(id.toString())
-        return this.prisma.answers.delete({
-            where: {id:number}
-        })
+        if (request.user.id === number || request.user.admin == true){
+            return this.prisma.answers.delete({
+                where: {id:number}
+            })
+        }
+        throw new NotFoundException('Resposta não pode ser deletada');
     }
+    
 }

@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateUsersDTO } from './dtos/create.users.dto';
 import { UsersService } from './users.service';
 import { IUsers } from './interfaces/users.interface';
 import { UpdateUserDto } from './dtos/update.users.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -14,24 +15,27 @@ export class UsersController {
         return this.UsersService.create(users)
     }
 
+    @UseGuards(AuthGuard)
     @Get()
-    findAll(): Promise<IUsers[]>{
-        return this.UsersService.findAll()
+    findAll(@Request() resquest): Promise<IUsers[]>{
+        return this.UsersService.findAll(resquest)
     }
 
+    @UseGuards(AuthGuard)
     @Get('/:id')
-    findById(@Param('id') id:number): Promise<IUsers>{
-        return this.UsersService.findByID(id)
+    findById(@Param('id') id:number, @Request() request): Promise<IUsers>{
+        return this.UsersService.findByID(id, request)
     }
 
+    @UseGuards(AuthGuard)
     @Patch('/:id')
-    update(@Param('id') id:number, @Body() users: UpdateUserDto): Promise<IUsers>{
-        return this.UsersService.update(id, users)
+    update(@Param('id') id:number, @Body() users: UpdateUserDto, @Request() request): Promise<IUsers>{
+        return this.UsersService.update(id, users, request)
     }
 
-
+    @UseGuards(AuthGuard)
     @Delete('/:id')
-    delete(@Param('id') id:number): Promise<IUsers>{
-        return this.UsersService.delete(id)
+    delete(@Param('id') id:number, @Request() request): Promise<IUsers>{
+        return this.UsersService.delete(id, request)
     }
 }
