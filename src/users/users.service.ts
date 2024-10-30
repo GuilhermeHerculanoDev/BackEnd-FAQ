@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUsersDTO } from './dtos/create.users.dto';
 import { PrismaService } from '../database/prisma.service'
 import { IUsers } from './interfaces/users.interface';
@@ -12,6 +12,20 @@ export class UsersService {
     constructor(private prisma: PrismaService) {}
 
     async create(users: CreateUsersDTO): Promise<IUsers>{
+        const {name, email, password} = users
+
+        const existingUser = await this.prisma.users.findFirst({
+            where: {
+                OR: [{ email }, { name }],
+            },
+        });
+        if (existingUser) {
+            throw new HttpException(
+                `O ${existingUser.name === name ? 'nome' : 'email'} já está registrado`,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
         const hashPassword = await bcrypt.hash(users.password, 10);
         return await this.prisma.users.create({data: {...users, password: hashPassword},});
     }
