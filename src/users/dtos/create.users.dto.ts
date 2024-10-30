@@ -7,7 +7,7 @@ export class CreateUsersDTO {
     name: string;
     
     @IsNotEmpty({message:"O email não pode está vazio"})
-    @IsEmail()
+    @IsEmail({}, {message: "O email deve ser um email"})
     email: string;
     
     @IsNotEmpty({message: "A senha não pode está vazia"})
