@@ -31,6 +31,19 @@ export class AnswersService {
         throw new NotFoundException("Resposta não encontrada");
     }
 
+    async findByAnswers(id: number): Promise<IAnswers[]> {
+        const number = parseInt(id.toString())
+        const answers = await this.prisma.answers.findMany({
+            where: { question_id: number }
+        });
+
+        if (answers.length > 0) {
+            return answers;
+        }
+
+        throw new NotFoundException("Nenhuma resposta foi encontrada encontrada para essa categoria");
+    }
+
     async update(id:number, answer:UpdateAnswerDTO, request): Promise<IAnswers>{
         let number = parseInt(id.toString())
         if (request.user.id === number || request.users.admin === true){

@@ -26,6 +26,11 @@ export class AnswersController {
         return this.AnswerService.findById(id)
     }
 
+    @Get('/searchAnswers/:id')
+    findByAnswers(@Param('id') questions_id:number): Promise<IAnswers[]>{
+        return this.AnswerService.findByAnswers(questions_id)
+    }
+
     @Patch('/:id')
     update(@Param('id') id:number, @Body() answer:UpdateAnswerDTO, @Request() request): Promise<IAnswers>{
         return this.AnswerService.update(id, answer, request)
