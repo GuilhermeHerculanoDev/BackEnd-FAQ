@@ -27,6 +27,11 @@ export class QuestionsController {
         return this.QuestionsService.findByID(id)
     }
 
+    @Get('/searchQuestions/:category_id')
+    findByCategory(@Param('category_id') category_id:number): Promise<IQuestions[]>{
+        return this.QuestionsService.findByCategory(category_id)
+    }
+
     @Patch('/:id')
     update(@Param('id') id:number, @Body() questions:UpdateQuestionsDto, @Request() request): Promise<IQuestions>{
         return this.QuestionsService.update(id, questions, request)

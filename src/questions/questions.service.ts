@@ -28,6 +28,19 @@ export class QuestionsService {
         }
     }
 
+    async findByCategory(id: number): Promise<IQuestions[]> {
+        const number = parseInt(id.toString())
+        const questions = await this.prisma.questions.findMany({
+            where: { category_id: number }
+        });
+
+        if (questions.length > 0) {
+            return questions;
+        }
+
+        throw new NotFoundException("Nenhuma questão encontrada para essa categoria");
+    }
+
     async update(id: number, users: UpdateQuestionsDto, request): Promise<IQuestions>{
         if (!request.user) {
             throw new UnauthorizedException("Usuário não autenticado");
