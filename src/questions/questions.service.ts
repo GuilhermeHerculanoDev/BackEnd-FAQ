@@ -67,6 +67,32 @@ export class QuestionsService {
         throw new NotFoundException("Nenhuma questão encontrada para essa categoria");
     }
 
+    async findByQuestionsUser (id: number): Promise<IQuestions[]> {
+        const number = parseInt(id.toString())
+        const questions = await this.prisma.questions.findMany({
+            where: { users_id: number },
+            select: {
+                id:true,
+                user:{
+                    select:{
+                        name:true
+                    } 
+                },
+                users_id: true,
+                category_id: true,
+                title: true,
+                description: true,
+                date:true
+            }
+        });
+
+        if (questions.length > 0) {
+            return questions;
+        }
+
+        throw new NotFoundException("Nenhuma questão encontrada para essa categoria");
+    }
+
     async update(id: number, users: UpdateQuestionsDto, request): Promise<IQuestions>{
         if (!request.user) {
             throw new UnauthorizedException("Usuário não autenticado");
