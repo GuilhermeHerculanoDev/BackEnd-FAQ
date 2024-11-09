@@ -20,7 +20,20 @@ export class QuestionsService {
     async findByID(id: number): Promise<IQuestions> {
         let number = parseInt(id.toString())
         const user = await this.prisma.questions.findUnique({
-            where: { id: number }
+            where: { id: number },
+            select: {
+                id:true,
+                user:{
+                    select:{
+                        name:true
+                    } 
+                },
+                users_id: true,
+                category_id: true,
+                title: true,
+                description: true,
+                date:true
+            }
         });
         
         if (user) {
@@ -28,10 +41,23 @@ export class QuestionsService {
         }
     }
 
-    async findByCategory(id: number): Promise<IQuestions[]> {
+    async findByCategoryQuestions(id: number): Promise<IQuestions[]> {
         const number = parseInt(id.toString())
         const questions = await this.prisma.questions.findMany({
-            where: { category_id: number }
+            where: { category_id: number },
+            select: {
+                id:true,
+                user:{
+                    select:{
+                        name:true
+                    } 
+                },
+                users_id: true,
+                category_id: true,
+                title: true,
+                description: true,
+                date:true
+            }
         });
 
         if (questions.length > 0) {

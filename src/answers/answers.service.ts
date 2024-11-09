@@ -34,7 +34,19 @@ export class AnswersService {
     async findByAnswers(id: number): Promise<IAnswers[]> {
         const number = parseInt(id.toString())
         const answers = await this.prisma.answers.findMany({
-            where: { question_id: number }
+            where: { question_id: number },
+            select: {
+                id:true,
+                user:{
+                    select:{
+                        name:true
+                    } 
+                },
+                users_id: true,
+                question_id: true,
+                answer:true,
+                date:true
+            }
         });
 
         if (answers.length > 0) {

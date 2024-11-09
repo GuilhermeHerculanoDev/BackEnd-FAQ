@@ -28,8 +28,8 @@ export class QuestionsController {
     }
 
     @Get('/searchQuestions/:category_id')
-    findByCategory(@Param('category_id') category_id:number): Promise<IQuestions[]>{
-        return this.QuestionsService.findByCategory(category_id)
+    findByCategoryQuestions(@Param('category_id') category_id:number): Promise<IQuestions[]>{
+        return this.QuestionsService.findByCategoryQuestions(category_id)
     }
 
     @Patch('/:id')
