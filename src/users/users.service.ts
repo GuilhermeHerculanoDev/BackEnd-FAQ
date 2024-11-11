@@ -12,7 +12,7 @@ export class UsersService {
     constructor(private prisma: PrismaService) {}
 
     async create(users: CreateUsersDTO): Promise<IUsers>{
-        const {name, email, password} = users
+        const {name, email, password, description, telephone} = users
 
         const existingUser = await this.prisma.users.findFirst({
             where: {
@@ -27,7 +27,17 @@ export class UsersService {
         }
 
         const hashPassword = await bcrypt.hash(users.password, 10);
-        return await this.prisma.users.create({data: {...users, password: hashPassword},});
+
+        const userData = {
+            name,
+            email,
+            password: hashPassword,
+            description,
+            telephone,
+            is_admin: users.is_admin || false,
+        };
+
+        return await this.prisma.users.create({data: userData});
     }
 
     async findAll(request): Promise<IUsers[]> {

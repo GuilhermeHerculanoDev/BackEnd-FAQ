@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsNotEmpty, Length } from "class-validator";
+import { IsEmail, IsNotEmpty, Length, Max, Min } from "class-validator";
 
 export class CreateUsersDTO {
     id?: number;
@@ -13,6 +13,10 @@ export class CreateUsersDTO {
     @IsNotEmpty({message: "A senha não pode está vazia"})
     @Length(1,30, {message: "A senha deve ter 1 a 30 caracteres"})
     password: string;
+
+    description?: string;
+
+    telephone?: string;
 
     is_admin?: boolean;
 }

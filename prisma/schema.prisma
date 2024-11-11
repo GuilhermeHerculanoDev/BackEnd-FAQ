@@ -11,8 +11,9 @@ model Users {
   id        Int         @id @default(autoincrement())
   name      String      @unique @db.VarChar(50)
   email     String      @unique @db.VarChar(100)
+  description String   @default("Esse usuário não tem nenhuma descrição") @db.VarChar(200)
+  telephone   String   @default("Sem telefone") @db.VarChar(13)
   password  String      @db.VarChar(100)
-  description  String   @db.VarChar(200)
   is_admin  Boolean     @default(false)
   answers   Answers[]
   questions Questions[]
