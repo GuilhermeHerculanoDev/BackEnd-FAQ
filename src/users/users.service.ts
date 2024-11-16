@@ -48,7 +48,6 @@ export class UsersService {
     }
 
     async findByID(id: number, request): Promise<IUsers> {
-        if (request.user.admin === true) {    
             let number = parseInt(id.toString())
             const user = await this.prisma.users.findUnique({
                 where: { id: number }
@@ -56,30 +55,67 @@ export class UsersService {
         
             if (user) {
                 return user
-            }
+            
         }
         
             throw new NotFoundException("Usuário não encontrado");
     }
 
-    async update(id: number, users: UpdateUserDto, request): Promise<IUsers>{
+    async update(id: number, users: UpdateUserDto, request): Promise<IUsers> {
         if (!request.user) {
             throw new UnauthorizedException("Usuário não autenticado");
-          }
-        let number = parseInt(id.toString())
-        if (request.user.id === number || request.user.admin === true){
+        }
+    
+        const userId = parseInt(id.toString(), 10);
+    
+        if (request.user.id === userId || request.user.admin === true) {
+            const { name, email, password, description, telephone, is_admin } = users;
+
+            const existingUser = await this.prisma.users.findFirst({
+                where: {
+                    OR: [{ email }, { name }, {telephone}, {description}],
+                },
+            });
+            if (existingUser) {
+                const conflictField = existingUser.email === email? 'email'
+                : existingUser.name === name
+                ? 'name'
+                : existingUser.telephone === telephone
+                ? 'telephone'
+                : 'description';
+            
+              throw new HttpException(
+                `O ${conflictField} já está registrado`,
+                HttpStatus.BAD_REQUEST,
+              );
+            }
+    
+            const userData: any = {
+                name,
+                email,
+                description,
+                telephone,
+                is_admin: is_admin || false,
+            };
+    
+            if (password) {
+                userData.password = await bcrypt.hash(password, 10);
+            }
+    
             try {
                 const updatedUser = await this.prisma.users.update({
-                    where: { id:number },
-                    data: users,
+                    where: { id: userId },
+                    data: userData,
                 });
                 return updatedUser;
             } catch (error) {
                 throw new NotFoundException('Usuário não encontrado');
             }
         }
-        throw new UnauthorizedException("Seu usuario não pode editar")
+    
+        throw new UnauthorizedException("Seu usuário não pode editar");
     }
+    
 
     async delete(id: number, request): Promise<IUsers>{
         if (request.user.admin === true || !request.user) {    
@@ -97,4 +133,18 @@ export class UsersService {
             where: { name: username },
         });
     }
+
+    async findByIDUser(id: number): Promise<CreateUsersDTO | null> {
+        let number = parseInt(id.toString())
+        const user = await this.prisma.users.findUnique({
+            where: { id: number }
+        });
+    
+        if (user) {
+            return user
+        
+    }
+    
+        throw new NotFoundException("Usuário não encontrado");
+}
 }

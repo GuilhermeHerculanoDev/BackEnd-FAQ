@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDTO } from './auth.dto';
 
@@ -11,5 +11,11 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     singIn(@Body('username') username:string, @Body('password') password: string): Promise<AuthDTO>{
         return this.authService.singIn(username, password)
+    }
+
+    @Post('verifyPassword/:id')
+    @HttpCode(HttpStatus.OK)
+    verifyPassword(@Param('id') id:number, @Body('password') password:string): Promise<string>{
+        return this.authService.verifyPassword(id, password)
     }
 }

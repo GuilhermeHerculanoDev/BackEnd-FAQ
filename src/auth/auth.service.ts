@@ -4,6 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import { AuthDTO } from './auth.dto';
 import { compareSync as bcryptCompareSync } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -25,9 +26,20 @@ export class AuthService {
         }
 
         const payload = {sub: foundUser.id, username: foundUser.name, email: foundUser.email, description: foundUser.description, telephone: foundUser.telephone ,admin: foundUser.is_admin}
-        console.log(payload)
         const token = this.jwtService.sign(payload)
-        console.log(token, this.jwtExpirationTimeInSeconds)
         return {token, expiresIn: this.jwtExpirationTimeInSeconds}
     }
+
+    async verifyPassword (id: number, password: string): Promise<string>{
+        const foundUser = await this.usersService.findByIDUser(id)
+
+
+        console.log(foundUser)
+
+        if (!foundUser || !bcryptCompareSync(password, foundUser.password)){
+            throw new UnauthorizedException("Senha incorreta")
+        }
+        return "Edição feita com sucesso"
+    }
+
 }

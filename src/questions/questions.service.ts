@@ -28,6 +28,11 @@ export class QuestionsService {
                         name:true
                     } 
                 },
+                answers:{
+                    select:{
+                        users_id:true
+                    }
+                },
                 users_id: true,
                 category_id: true,
                 title: true,
@@ -51,6 +56,11 @@ export class QuestionsService {
                     select:{
                         name:true
                     } 
+                },
+                answers:{
+                    select:{
+                        users_id:true
+                    }
                 },
                 users_id: true,
                 category_id: true,
@@ -77,6 +87,11 @@ export class QuestionsService {
                     select:{
                         name:true
                     } 
+                },
+                category:{
+                    select:{
+                        category_name:true
+                    }
                 },
                 users_id: true,
                 category_id: true,
@@ -114,11 +129,10 @@ export class QuestionsService {
     
     async delete(id: number, request): Promise<IQuestions>{
         let number = parseInt(id.toString())
-        if (request.user.admin === true || request.user.id === number) {    
             return this.prisma.questions.delete({
                 where: {id: number},
             });
-        }
+        
         throw new UnauthorizedException("Seu usuario não pode excluir tarefas")
     }
 }

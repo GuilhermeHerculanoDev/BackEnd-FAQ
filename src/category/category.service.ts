@@ -18,10 +18,7 @@ export class CategoryService {
     }
 
     findAll(response): Promise<Category[]>{
-        if(response.user.admin === true){
             return this.prisma.category.findMany()
-        }
-        throw new UnauthorizedException("Somente administradores podem criar categorias");
     }
 
     async findByID(id:number): Promise<Category> {
