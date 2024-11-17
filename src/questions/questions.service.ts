@@ -14,7 +14,31 @@ export class QuestionsService {
     }
 
     async findAll(): Promise<IQuestions[]>{
-        return await this.prisma.questions.findMany()
+        return await this.prisma.questions.findMany({
+            select: {
+                id:true,
+                user:{
+                    select:{
+                        name:true
+                    } 
+                },
+                answers:{
+                    select:{
+                        users_id:true
+                    }
+                },
+                category:{
+                    select:{
+                        category_name:true
+                    }
+                },
+                users_id: true,
+                category_id: true,
+                title: true,
+                description: true,
+                date:true
+            }
+        })
     }
 
     async findByID(id: number): Promise<IQuestions> {
@@ -108,23 +132,20 @@ export class QuestionsService {
         throw new NotFoundException("Nenhuma questão encontrada para essa categoria");
     }
 
-    async update(id: number, users: UpdateQuestionsDto, request): Promise<IQuestions>{
+    async update(id: number, questions: UpdateQuestionsDto, request): Promise<IQuestions>{
         if (!request.user) {
             throw new UnauthorizedException("Usuário não autenticado");
           }
         let number = parseInt(id.toString())
-        if (request.user.id === number || request.user.admin === true){
             try {
                 const updatedUser = await this.prisma.questions.update({
                     where: { id:number },
-                    data: users,
+                    data: questions,
                 });
                 return updatedUser;
             } catch (error) {
                 throw new NotFoundException('Usuário não encontrado');
             }
-        }
-        throw new UnauthorizedException("Seu usuario não pode editar")
     }
     
     async delete(id: number, request): Promise<IQuestions>{
@@ -133,6 +154,5 @@ export class QuestionsService {
                 where: {id: number},
             });
         
-        throw new UnauthorizedException("Seu usuario não pode excluir tarefas")
     }
 }

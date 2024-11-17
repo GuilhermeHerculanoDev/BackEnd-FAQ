@@ -31,7 +31,7 @@ export class AnswersController {
         return this.AnswerService.findByAnswers(questions_id)
     }
 
-    @Get('/searchQuestionsUser/:id')
+    @Get('/searchAnswersUser/:id')
     findByAnswersUser(@Param('id') id:number): Promise<IAnswers[]>{
         return this.AnswerService.findByAnswersUser(id)
     }

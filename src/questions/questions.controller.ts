@@ -7,11 +7,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 
 
 @Controller('questions')
-@UseGuards(AuthGuard)
 export class QuestionsController {
 
     constructor (private QuestionsService: QuestionsService) {}
 
+    @UseGuards(AuthGuard)
     @Post()
     create(@Body() question:CreateQuestionsDTO): Promise<IQuestions>{
         return this.QuestionsService.create(question)
@@ -37,11 +37,13 @@ export class QuestionsController {
         return this.QuestionsService.findByQuestionsUser(id)
     }
 
+    @UseGuards(AuthGuard)
     @Patch('/:id')
     update(@Param('id') id:number, @Body() questions:UpdateQuestionsDto, @Request() request): Promise<IQuestions>{
         return this.QuestionsService.update(id, questions, request)
     }
 
+    @UseGuards(AuthGuard)
     @Delete('/:id')
     delete(@Param('id') id:number, @Request() request): Promise<IQuestions>{
         return this.QuestionsService.delete(id, request)
