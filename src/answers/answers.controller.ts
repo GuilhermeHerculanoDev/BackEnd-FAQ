@@ -6,11 +6,11 @@ import { UpdateAnswerDTO } from './dtos/update.answer.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('answers')
-@UseGuards(AuthGuard)
 export class AnswersController {
 
     constructor (private AnswerService: AnswersService) {}
-
+    
+    @UseGuards(AuthGuard)
     @Post()
     create(@Body() answer: CreateAnswerDTO): Promise<IAnswers> {
         return this.AnswerService.create(answer)
@@ -31,16 +31,19 @@ export class AnswersController {
         return this.AnswerService.findByAnswers(questions_id)
     }
 
+    @UseGuards(AuthGuard)
     @Get('/searchAnswersUser/:id')
     findByAnswersUser(@Param('id') id:number): Promise<IAnswers[]>{
         return this.AnswerService.findByAnswersUser(id)
     }
 
+    @UseGuards(AuthGuard)
     @Patch('/:id')
     update(@Param('id') id:number, @Body() answer:UpdateAnswerDTO, @Request() request): Promise<IAnswers>{
         return this.AnswerService.update(id, answer, request)
     }
 
+    @UseGuards(AuthGuard)
     @Delete('/:id')
     delete(@Param('id') id:number, @Request() request): Promise<IAnswers>{
         return this.AnswerService.delete(id, request)

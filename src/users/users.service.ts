@@ -44,7 +44,10 @@ export class UsersService {
         if (request.user.admin === true) {    
             return await this.prisma.users.findMany();  
         }
-        throw new UnauthorizedException("O usuario não tem permisão");
+        throw new HttpException(
+            'Usúario não autorizado',
+            HttpStatus.BAD_REQUEST,
+        );
     }
 
     async findByID(id: number, request): Promise<IUsers> {
@@ -68,7 +71,7 @@ export class UsersService {
     
         const userId = parseInt(id.toString(), 10);
     
-        if (request.user.id === userId || request.user.admin === true) {
+        if (request.user.sub === userId || request.user.admin === true) {
             const { name, email, password, description, telephone, is_admin } = users;
 
             const existingUser = await this.prisma.users.findFirst({
@@ -118,7 +121,7 @@ export class UsersService {
     
 
     async delete(id: number, request): Promise<IUsers>{
-        if (request.user.admin === true || !request.user) {    
+        if (request.user.admin === true || request.user.sub) {    
             let number = parseInt(id.toString())
             return this.prisma.users.delete({
                 where: {id: number},

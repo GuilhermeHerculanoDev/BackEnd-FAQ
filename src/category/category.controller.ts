@@ -13,9 +13,8 @@ export class CategoryController {
 
     @UseGuards(AuthGuard)
     @Post()
-    @UseInterceptors(FileInterceptor('image'))
-    async create(@Body() category: CreateCategoryDTO, @Request() reponse, @UploadedFile() file: Express.Multer.File): Promise<ICategory>{
-        return this.CategoryService.create(category, reponse, file)
+    async create(@Body() category: CreateCategoryDTO, @Request() reponse): Promise<ICategory>{
+        return this.CategoryService.create(category, reponse)
     }
 
 

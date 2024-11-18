@@ -9,15 +9,11 @@ export class CategoryService {
 
     constructor (private prisma: PrismaService) {}
 
-    async create(category: CreateCategoryDTO, response, file: Express.Multer.File): Promise<Category>{
-        const imageBuffer = file.buffer;
+    async create(category: CreateCategoryDTO, response): Promise<Category>{
+        console.log(response)
         if(response.user.admin === true){
             const namecategory = this.prisma.category.create({
-                data:{
-                    category_name: category.category_name,
-                    category_description: category.category_description,
-                    category_image: imageBuffer
-                }});
+                data:category});
             return namecategory
         }
         throw new UnauthorizedException("Somente administradores podem criar categorias");

@@ -14,7 +14,20 @@ export class AnswersService {
     }
 
     findAll(): Promise<IAnswers[]>{
-        return this.prisma.answers.findMany()
+        return this.prisma.answers.findMany({
+            select:{
+                id:true,
+                user:{
+                    select:{
+                        name:true
+                    }
+                },
+                answer:true,
+                date:true,
+                question_id:true,
+                users_id:true
+            }
+        })
 
     }
 
@@ -83,7 +96,7 @@ export class AnswersService {
 
     async update(id:number, answer:UpdateAnswerDTO, request): Promise<IAnswers>{
         let number = parseInt(id.toString())
-        if (request.user.id === number || request.users.admin === true){
+        // if (request.user.sub === number || request.user.admin === true){
             try {
                 const updatedAnswer = await this.prisma.answers.update({
                     where: { id:number },
@@ -93,17 +106,17 @@ export class AnswersService {
             } catch (error) {
                 throw new NotFoundException('Resposta não encontrada');
             }
-        }
+        // }
         throw new NotFoundException('Resposta não pode ser editada');
     }
 
     delete(id:number, request): Promise<IAnswers>{
         let number = parseInt(id.toString())
-        if (request.user.id === number || request.user.admin == true){
+        // if (request.user.sub === number || request.user.admin == true){
             return this.prisma.answers.delete({
                 where: {id:number}
             })
-        }
+        // }
         throw new NotFoundException('Resposta não pode ser deletada');
     }
     

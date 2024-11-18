@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { AuthDTO } from './auth.dto';
@@ -22,7 +22,10 @@ export class AuthService {
         const foundUser = await this.usersService.findByUserName(username)
 
         if (!foundUser || !bcryptCompareSync(password, foundUser.password)){
-            throw new UnauthorizedException()
+            throw new HttpException(
+                'Usúario ou senha incorretos',
+                HttpStatus.BAD_REQUEST,
+            );
         }
 
         const payload = {sub: foundUser.id, username: foundUser.name, email: foundUser.email, description: foundUser.description, telephone: foundUser.telephone ,admin: foundUser.is_admin}
@@ -33,11 +36,11 @@ export class AuthService {
     async verifyPassword (id: number, password: string): Promise<string>{
         const foundUser = await this.usersService.findByIDUser(id)
 
-
-        console.log(foundUser)
-
         if (!foundUser || !bcryptCompareSync(password, foundUser.password)){
-            throw new UnauthorizedException("Senha incorreta")
+            throw new HttpException(
+                'Senha incorreta',
+                HttpStatus.BAD_REQUEST,
+            );
         }
         return "Edição feita com sucesso"
     }
